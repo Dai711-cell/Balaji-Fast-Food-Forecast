@@ -1,0 +1,18 @@
+{
+  "model_name": "Extra Trees Regressor",
+  "feature_set": "target_history_calendar",
+  "trained_at": "2026-07-08T19:29:44",
+  "first_observed_date": "2022-04-01",
+  "last_observed_date": "2023-03-30",
+  "modeling_rows": 334,
+  "validation_rows": 67,
+  "validation_mae": 437.4052341255801,
+  "validation_rmse": 587.4739838954058,
+  "validation_r2": 0.0774106532971619,
+  "validation_smape": 53.34089507662064,
+  "baseline_mae": 463.51741293532336,
+  "baseline_rmse": 625.3494346546461,
+  "residual_q50": 339.2218121227962,
+  "residual_q60": 470.6735749109621,
+  "residual_q70": 601.9135105849925
+}

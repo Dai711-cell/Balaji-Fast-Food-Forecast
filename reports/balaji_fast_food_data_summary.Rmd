@@ -1,0 +1,185 @@
+---
+title: "Balaji Fast Food Sales - Data Summary"
+output: html_document
+---
+
+# Balaji Fast Food Sales - Data Summary
+
+Informe inicial para entender el dataset antes de limpiar, transformar o modelar. El archivo original no se modifica.
+
+## 1. Resumen rapido
+| metric | value |
+| --- | --- |
+| rows | 1000 |
+| columns | 10 |
+| duplicate_rows | 0 |
+| memory_mb | 0.350 |
+| numeric_columns | 4 |
+| categorical_or_text_columns | 6 |
+
+
+## 2. Chequeos de calidad iniciales
+| check | result | comment |
+| --- | --- | --- |
+| duplicate rows | 0 | 0 is ideal for exact duplicate detection |
+| missing transaction_type | 107 | important before payment-method analysis |
+| transaction_amount = item_price * quantity | 1000/1000 correct | 0 mismatches |
+| order_id unique | 1000/1000 | looks like one row per order line if fully unique |
+
+
+## 3. Estructura tipo info()
+| column | dtype | non_null | nulls | null_pct | unique | sample_values |
+| --- | --- | --- | --- | --- | --- | --- |
+| order_id | int64 | 1000 | 0 | 0.00% | 1000 | 1, 2, 3 |
+| date | str | 1000 | 0 | 0.00% | 348 | 07-03-2022, 8/23/2022, 11/20/2022 |
+| item_name | str | 1000 | 0 | 0.00% | 7 | Aalopuri, Vadapav, Vadapav |
+| item_type | str | 1000 | 0 | 0.00% | 2 | Fastfood, Fastfood, Fastfood |
+| item_price | int64 | 1000 | 0 | 0.00% | 5 | 20, 20, 20 |
+| quantity | int64 | 1000 | 0 | 0.00% | 15 | 13, 15, 1 |
+| transaction_amount | int64 | 1000 | 0 | 0.00% | 48 | 260, 300, 20 |
+| transaction_type | str | 893 | 107 | 10.70% | 2 | Cash, Cash, Online |
+| received_by | str | 1000 | 0 | 0.00% | 2 | Mr., Mr., Mr. |
+| time_of_sale | str | 1000 | 0 | 0.00% | 5 | Night, Afternoon, Afternoon |
+
+
+## 4. Primeras filas: head(10)
+| order_id | date | item_name | item_type | item_price | quantity | transaction_amount | transaction_type | received_by | time_of_sale |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 07-03-2022 | Aalopuri | Fastfood | 20 | 13 | 260 |  | Mr. | Night |
+| 2 | 8/23/2022 | Vadapav | Fastfood | 20 | 15 | 300 | Cash | Mr. | Afternoon |
+| 3 | 11/20/2022 | Vadapav | Fastfood | 20 | 1 | 20 | Cash | Mr. | Afternoon |
+| 4 | 02-03-2023 | Sugarcane juice | Beverages | 25 | 6 | 150 | Online | Mr. | Night |
+| 5 | 10-02-2022 | Sugarcane juice | Beverages | 25 | 8 | 200 | Online | Mr. | Evening |
+| 6 | 11/14/2022 | Vadapav | Fastfood | 20 | 10 | 200 | Cash | Mr. | Evening |
+| 7 | 05-03-2022 | Sugarcane juice | Beverages | 25 | 9 | 225 | Cash | Mr. | Evening |
+| 8 | 12/22/2022 | Panipuri | Fastfood | 20 | 14 | 280 | Online | Mr. | Night |
+| 9 | 06-10-2022 | Panipuri | Fastfood | 20 | 1 | 20 | Cash | Mrs. | Morning |
+| 10 | 9/16/2022 | Panipuri | Fastfood | 20 | 5 | 100 | Online | Mr. | Afternoon |
+
+
+## 5. Ultimas filas: tail(10)
+| order_id | date | item_name | item_type | item_price | quantity | transaction_amount | transaction_type | received_by | time_of_sale |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 991 | 1/18/2023 | Sandwich | Fastfood | 60 | 7 | 420 | Cash | Mrs. | Night |
+| 992 | 10/21/2022 | Sandwich | Fastfood | 60 | 5 | 300 | Cash | Mr. | Morning |
+| 993 | 7/17/2022 | Frankie | Fastfood | 50 | 3 | 150 | Online | Mrs. | Night |
+| 994 | 11-01-2022 | Panipuri | Fastfood | 20 | 2 | 40 | Online | Mrs. | Evening |
+| 995 | 6/18/2022 | Sugarcane juice | Beverages | 25 | 1 | 25 | Online | Mr. | Night |
+| 996 | 3/19/2023 | Frankie | Fastfood | 50 | 10 | 500 |  | Mrs. | Evening |
+| 997 | 9/20/2022 | Sandwich | Fastfood | 60 | 7 | 420 |  | Mr. | Evening |
+| 998 | 1/26/2023 | Sandwich | Fastfood | 60 | 13 | 780 |  | Mr. | Evening |
+| 999 | 8/27/2022 | Panipuri | Fastfood | 20 | 5 | 100 |  | Mrs. | Afternoon |
+| 1000 | 5/29/2022 | Aalopuri | Fastfood | 20 | 3 | 60 | Online | Mrs. | Midnight |
+
+
+## 6. Describe numerico
+| column | count | mean | std | min | 25% | 50% | 75% | max |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| order_id | 1000.0 | 500.5 | 288.819 | 1.0 | 250.75 | 500.5 | 750.25 | 1000.0 |
+| item_price | 1000.0 | 33.315 | 14.922 | 20.0 | 20.0 | 25.0 | 50.0 | 60.0 |
+| quantity | 1000.0 | 8.162 | 4.413 | 1.0 | 4.0 | 8.0 | 12.0 | 15.0 |
+| transaction_amount | 1000.0 | 275.23 | 204.403 | 20.0 | 120.0 | 240.0 | 360.0 | 900.0 |
+
+
+## 7. Describe categorico/texto
+| column | count | unique | top | freq |
+| --- | --- | --- | --- | --- |
+| date | 1000 | 348 | 8/31/2022 | 8 |
+| item_name | 1000 | 7 | Cold coffee | 161 |
+| item_type | 1000 | 2 | Fastfood | 686 |
+| transaction_type | 893 | 2 | Cash | 476 |
+| received_by | 1000 | 2 | Mr. | 512 |
+| time_of_sale | 1000 | 5 | Night | 205 |
+
+
+## 8. Valores nulos
+| column | nulls | null_pct |
+| --- | --- | --- |
+| transaction_type | 107 | 10.70% |
+| date | 0 | 0.00% |
+| item_name | 0 | 0.00% |
+| item_price | 0 | 0.00% |
+| item_type | 0 | 0.00% |
+| order_id | 0 | 0.00% |
+| quantity | 0 | 0.00% |
+| received_by | 0 | 0.00% |
+| time_of_sale | 0 | 0.00% |
+| transaction_amount | 0 | 0.00% |
+
+
+## 9. Columnas temporales detectadas
+| column | parsed_non_null | unparsed | min | max | note |
+| --- | --- | --- | --- | --- | --- |
+| date | 1000 | 0 | 2022-04-01 | 2023-03-30 | mixed date formats detected |
+| time_of_sale | 0 | 1000 |  |  | check before using as date/time |
+
+
+## 10. Valores frecuentes por columna categorica
+
+
+### date
+| date | count | pct |
+| --- | --- | --- |
+| 8/31/2022 | 8 | 0.8% |
+| 05-09-2022 | 8 | 0.8% |
+| 10-11-2022 | 8 | 0.8% |
+| 02-03-2023 | 7 | 0.7% |
+| 02-05-2023 | 7 | 0.7% |
+| 3/19/2023 | 7 | 0.7% |
+| 2/13/2023 | 7 | 0.7% |
+| 6/30/2022 | 7 | 0.7% |
+| 9/21/2022 | 7 | 0.7% |
+| 10-02-2022 | 6 | 0.6% |
+
+### item_name
+| item_name | count | pct |
+| --- | --- | --- |
+| Cold coffee | 161 | 16.1% |
+| Sugarcane juice | 153 | 15.3% |
+| Panipuri | 150 | 15.0% |
+| Frankie | 139 | 13.9% |
+| Aalopuri | 134 | 13.4% |
+| Vadapav | 134 | 13.4% |
+| Sandwich | 129 | 12.9% |
+
+### item_type
+| item_type | count | pct |
+| --- | --- | --- |
+| Fastfood | 686 | 68.6% |
+| Beverages | 314 | 31.4% |
+
+### transaction_type
+| transaction_type | count | pct |
+| --- | --- | --- |
+| Cash | 476 | 47.6% |
+| Online | 417 | 41.7% |
+|  | 107 | 10.7% |
+
+### received_by
+| received_by | count | pct |
+| --- | --- | --- |
+| Mr. | 512 | 51.2% |
+| Mrs. | 488 | 48.8% |
+
+### time_of_sale
+| time_of_sale | count | pct |
+| --- | --- | --- |
+| Night | 205 | 20.5% |
+| Afternoon | 205 | 20.5% |
+| Evening | 201 | 20.1% |
+| Midnight | 199 | 19.9% |
+| Morning | 190 | 19.0% |
+
+
+## 11. Lectura inicial
+
+
+- El dataset es pequeno y manejable: 1000 filas y 10 columnas.
+
+- `transaction_type` tiene valores nulos; conviene decidir si son desconocidos, errores o pagos no registrados.
+
+- `date` mezcla formatos; antes de hacer analisis temporal hay que estandarizarla.
+
+- `transaction_amount` coincide con `item_price * quantity`, asi que esa relacion parece consistente.
+
+- `order_id` parece unico, asi que inicialmente cada fila puede tratarse como una venta/linea independiente.

@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Local environments and secrets
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# R / rendered reports
+.Rhistory
+.RData
+.Rproj.user/
+*.html
+
+# Source data - kept local and immutable
+Balaji Fast Food Sales.csv
+category distribution.JPG
+data/raw/*
+!data/raw/README.md
+
+# Local application state
+data/app/*.sqlite
+data/app/*.sqlite-*
+*.pid
+*.log
+
+# Derived datasets - reproducible from scripts
+data/processed/*.csv
+data/processed/*.parquet
+data/processed/*.pkl
+
+# Optional exports
+outputs/
+exports/

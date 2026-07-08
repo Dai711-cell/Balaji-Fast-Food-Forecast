@@ -1,0 +1,267 @@
+﻿---
+title: "Balaji Fast Food Sales - Graficos Iniciales"
+author: "Eric Gomez"
+date: "2026-07-08"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 10,
+  fig.height = 5.8,
+  dpi = 120
+)
+```
+
+# Objetivo
+
+Crear una primera vista visual del dataset de ventas de Balaji Fast Food: distribucion de variables principales y ventas agregadas por fecha, mes, producto, tipo de producto, tipo de pago y persona que recibe.
+
+El CSV original no se modifica. La limpieza se hace en memoria dentro de este Rmd.
+
+# Carga y limpieza minima
+
+```{r load-data}
+raw_path <- "../Balaji Fast Food Sales.csv"
+ventas <- read.csv(raw_path, stringsAsFactors = FALSE, check.names = FALSE)
+
+# Guardamos la fecha original para trazabilidad.
+ventas$date_original <- ventas$date
+
+# El dataset mezcla fechas con '-' y con '/'. Primero unificamos separador.
+ventas$date_standardized <- gsub("-", "/", trimws(ventas$date_original), fixed = TRUE)
+
+# Segun el rango observado, la lectura coherente es mes/dia/anio.
+ventas$date <- as.Date(ventas$date_standardized, format = "%m/%d/%Y")
+
+# Limpiamos espacios en variables categoricas.
+categorical_cols <- c("item_name", "item_type", "transaction_type", "received_by", "time_of_sale")
+for (col in categorical_cols) {
+  ventas[[col]] <- trimws(ventas[[col]])
+}
+
+# Los nulos o vacios de transaction_type se mantienen como categoria explicita.
+ventas$transaction_type[is.na(ventas$transaction_type) | ventas$transaction_type == ""] <- "Unknown"
+
+# Comprobaciones basicas.
+stopifnot(sum(is.na(ventas$date)) == 0)
+stopifnot(sum(is.na(ventas$transaction_type)) == 0)
+
+str(ventas)
+```
+
+# Resumen rapido
+
+```{r quick-summary}
+summary_table <- data.frame(
+  metrica = c(
+    "filas",
+    "columnas",
+    "fecha_minima",
+    "fecha_maxima",
+    "ventas_totales_importe",
+    "unidades_totales",
+    "ticket_medio"
+  ),
+  valor = c(
+    nrow(ventas),
+    ncol(ventas),
+    as.character(min(ventas$date)),
+    as.character(max(ventas$date)),
+    sum(ventas$transaction_amount),
+    sum(ventas$quantity),
+    round(mean(ventas$transaction_amount), 2)
+  )
+)
+summary_table
+```
+
+```{r helpers}
+plot_bar <- function(values, title, xlab = "", ylab = "", col = "#4E79A7", las = 2) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par))
+  par(mar = c(8, 5, 4, 2))
+  barplot(
+    values,
+    main = title,
+    xlab = xlab,
+    ylab = ylab,
+    col = col,
+    border = "white",
+    las = las
+  )
+}
+
+plot_sorted_bar <- function(df, label_col, value_col, title, ylab = "Importe vendido") {
+  df <- df[order(df[[value_col]], decreasing = TRUE), ]
+  values <- setNames(df[[value_col]], df[[label_col]])
+  plot_bar(values, title = title, ylab = ylab, col = "#59A14F")
+}
+```
+
+# Distribucion de variables principales
+
+Estos graficos cuentan cuantas filas/ventas hay por categoria. Sirven para ver la composicion del dataset antes de mirar importes.
+
+```{r item-name-counts}
+plot_bar(sort(table(ventas$item_name), decreasing = TRUE),
+         title = "Numero de ventas por producto",
+         ylab = "Numero de filas / ventas",
+         col = "#4E79A7")
+```
+
+```{r item-type-counts}
+plot_bar(sort(table(ventas$item_type), decreasing = TRUE),
+         title = "Numero de ventas por tipo de producto",
+         ylab = "Numero de filas / ventas",
+         col = "#F28E2B")
+```
+
+```{r payment-type-counts}
+plot_bar(sort(table(ventas$transaction_type), decreasing = TRUE),
+         title = "Numero de ventas por tipo de pago",
+         ylab = "Numero de filas / ventas",
+         col = "#E15759")
+```
+
+```{r received-by-counts}
+plot_bar(sort(table(ventas$received_by), decreasing = TRUE),
+         title = "Numero de ventas por persona que recibe",
+         ylab = "Numero de filas / ventas",
+         col = "#76B7B2")
+```
+
+```{r time-of-sale-counts}
+time_order <- c("Morning", "Afternoon", "Evening", "Night", "Midnight")
+time_counts <- table(factor(ventas$time_of_sale, levels = time_order))
+plot_bar(time_counts,
+         title = "Numero de ventas por franja horaria",
+         ylab = "Numero de filas / ventas",
+         col = "#B07AA1")
+```
+
+# Ventas por dia y por mes
+
+Para el dia uso linea porque hay muchos dias y una barra por dia queda poco legible. Para mes uso barras.
+
+```{r daily-sales}
+daily_sales <- aggregate(transaction_amount ~ date, data = ventas, sum)
+daily_sales <- daily_sales[order(daily_sales$date), ]
+
+old_par <- par(no.readonly = TRUE)
+par(mar = c(5, 5, 4, 2))
+plot(
+  daily_sales$date,
+  daily_sales$transaction_amount,
+  type = "l",
+  lwd = 2,
+  col = "#4E79A7",
+  main = "Importe vendido por dia",
+  xlab = "Fecha",
+  ylab = "Importe vendido"
+)
+points(daily_sales$date, daily_sales$transaction_amount, pch = 16, cex = 0.45, col = "#4E79A7")
+par(old_par)
+
+head(daily_sales, 10)
+```
+
+```{r monthly-sales}
+ventas$month <- as.Date(format(ventas$date, "%Y-%m-01"))
+monthly_sales <- aggregate(transaction_amount ~ month, data = ventas, sum)
+monthly_sales <- monthly_sales[order(monthly_sales$month), ]
+
+monthly_values <- setNames(monthly_sales$transaction_amount, format(monthly_sales$month, "%Y-%m"))
+plot_bar(monthly_values,
+         title = "Importe vendido por mes",
+         ylab = "Importe vendido",
+         col = "#59A14F")
+
+monthly_sales
+```
+
+# Ventas por tipo de pago
+
+```{r sales-by-payment}
+sales_by_payment <- aggregate(transaction_amount ~ transaction_type, data = ventas, sum)
+plot_sorted_bar(sales_by_payment,
+                label_col = "transaction_type",
+                value_col = "transaction_amount",
+                title = "Importe vendido por tipo de pago")
+sales_by_payment[order(sales_by_payment$transaction_amount, decreasing = TRUE), ]
+```
+
+# Ventas por producto
+
+```{r sales-by-product}
+sales_by_product <- aggregate(transaction_amount ~ item_name, data = ventas, sum)
+plot_sorted_bar(sales_by_product,
+                label_col = "item_name",
+                value_col = "transaction_amount",
+                title = "Importe vendido por producto")
+sales_by_product[order(sales_by_product$transaction_amount, decreasing = TRUE), ]
+```
+
+```{r quantity-by-product}
+quantity_by_product <- aggregate(quantity ~ item_name, data = ventas, sum)
+plot_sorted_bar(quantity_by_product,
+                label_col = "item_name",
+                value_col = "quantity",
+                title = "Unidades vendidas por producto",
+                ylab = "Unidades vendidas")
+quantity_by_product[order(quantity_by_product$quantity, decreasing = TRUE), ]
+```
+
+# Ventas por tipo de producto
+
+```{r sales-by-item-type}
+sales_by_item_type <- aggregate(transaction_amount ~ item_type, data = ventas, sum)
+plot_sorted_bar(sales_by_item_type,
+                label_col = "item_type",
+                value_col = "transaction_amount",
+                title = "Importe vendido por tipo de producto")
+sales_by_item_type[order(sales_by_item_type$transaction_amount, decreasing = TRUE), ]
+```
+
+# Ventas por persona que recibe
+
+```{r sales-by-received-by}
+sales_by_received <- aggregate(transaction_amount ~ received_by, data = ventas, sum)
+plot_sorted_bar(sales_by_received,
+                label_col = "received_by",
+                value_col = "transaction_amount",
+                title = "Importe vendido por persona que recibe")
+sales_by_received[order(sales_by_received$transaction_amount, decreasing = TRUE), ]
+```
+
+# Ventas por franja horaria
+
+```{r sales-by-time-of-sale}
+sales_by_time <- aggregate(transaction_amount ~ time_of_sale, data = ventas, sum)
+sales_by_time$time_of_sale <- factor(sales_by_time$time_of_sale, levels = time_order)
+sales_by_time <- sales_by_time[order(sales_by_time$time_of_sale), ]
+
+values <- setNames(sales_by_time$transaction_amount, sales_by_time$time_of_sale)
+plot_bar(values,
+         title = "Importe vendido por franja horaria",
+         ylab = "Importe vendido",
+         col = "#B07AA1")
+sales_by_time
+```
+
+# Lectura inicial
+
+```{r interpretation, echo=FALSE}
+cat("- Producto con mayor importe vendido:", sales_by_product$item_name[which.max(sales_by_product$transaction_amount)], "\n")
+cat("- Tipo de producto con mayor importe vendido:", sales_by_item_type$item_type[which.max(sales_by_item_type$transaction_amount)], "\n")
+cat("- Tipo de pago con mayor importe vendido:", sales_by_payment$transaction_type[which.max(sales_by_payment$transaction_amount)], "\n")
+cat("- Persona que recibe con mayor importe vendido:", sales_by_received$received_by[which.max(sales_by_received$transaction_amount)], "\n")
+cat("- Mes con mayor importe vendido:", format(monthly_sales$month[which.max(monthly_sales$transaction_amount)], "%Y-%m"), "\n")
+```
