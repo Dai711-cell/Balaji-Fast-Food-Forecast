@@ -553,3 +553,11 @@ Verificacion:
 - Se documentaron las carpetas de datos y la ejecucion desde una clonacion limpia.
 - La demo puede iniciar con el modelo versionado aunque el CSV original no este presente.
 - Se excluyeron SQLite, PID, caches, secretos y HTML regenerables.
+
+## 2026-07-09 | reporting | Presentacion comercial en diapositivas
+
+- Creado `reports/commercial_sales_forecast_report.pptx` con 10 diapositivas 16:9.
+- Cada diapositiva cubre un grafico clave o una tematica comercial: problema, mejora, comportamiento real, aciertos utiles, producto, interpretacion, valor del historico, mantenimiento y recomendacion.
+- Se eliminaron del relato principal los graficos tecnicos de deterioro, walk-forward y mejora por metrica para reducir ruido.
+- Se incorporo una captura real de la aplicacion y se mantuvieron solo los graficos de comparacion temporal y margenes utiles.
+- La presentacion fue renderizada, revisada visualmente y validada sin desbordamientos.

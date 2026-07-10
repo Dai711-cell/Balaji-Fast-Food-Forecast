@@ -47,3 +47,6 @@ data/processed/*.pkl
 # Optional exports
 outputs/
 exports/
+
+# Presentation QA artifacts
+*.pptx.inspect.ndjson
