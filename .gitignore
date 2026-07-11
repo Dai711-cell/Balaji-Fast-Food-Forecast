@@ -50,3 +50,4 @@ exports/
 
 # Presentation QA artifacts
 *.pptx.inspect.ndjson
+!reports/commercial_sales_forecast_slides.html

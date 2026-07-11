@@ -561,3 +561,10 @@ Verificacion:
 - Se eliminaron del relato principal los graficos tecnicos de deterioro, walk-forward y mejora por metrica para reducir ruido.
 - Se incorporo una captura real de la aplicacion y se mantuvieron solo los graficos de comparacion temporal y margenes utiles.
 - La presentacion fue renderizada, revisada visualmente y validada sin desbordamientos.
+
+## 2026-07-11 | reporting | Presentacion comercial web sin PowerPoint
+
+- Sustituido el entregable principal `reports/commercial_sales_forecast_report.pptx` por `reports/commercial_sales_forecast_slides.html`.
+- La presentacion se abre en navegador, incluye navegacion por diapositivas, controles, pantalla completa y soporte de impresion a PDF.
+- Se mantiene el relato comercial de 10 diapositivas con metricas clave, graficos utiles, captura de producto y recomendacion de mantenimiento.
+- Anadida `reports/figures/commercial_app_home.png` como captura local de la aplicacion para que el HTML sea portable dentro del repositorio.

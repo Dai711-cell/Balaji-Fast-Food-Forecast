@@ -87,11 +87,11 @@ La demo de prediccion puede arrancar sin el CSV porque `models/sales_forecast_mo
 
 ## Informes principales
 
-- `reports/commercial_sales_forecast_report.pptx`: presentacion comercial de 10 diapositivas preparada para reuniones con negocio.
+- `reports/commercial_sales_forecast_slides.html`: presentacion comercial web de 10 diapositivas para abrir en navegador, sin PowerPoint ni licencia.
 - `reports/commercial_sales_forecast_report.html`: version extensa del informe generada localmente.
 - `reports/daily_sales_model_report.html`: comparacion tecnica de modelos.
 - `reports/extra_trees_vs_baseline_sales_amount.html`: real frente a prediccion.
-- Los archivos `.Rmd` y las figuras permanecen versionados; los HTML regenerables se excluyen.
+- Los archivos `.Rmd` y las figuras permanecen versionados; los HTML regenerables se excluyen, salvo la presentacion web final.
 
 ## Decisiones de modelado
 
