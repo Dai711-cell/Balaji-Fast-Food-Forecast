@@ -56,7 +56,7 @@ Hay tres caminos:
 
 Despues de cargar datos nuevos se debe pulsar `Reentrenar ahora`. En una implantacion real esto podria programarse cada noche o cada semana.
 
-## Seguridad opcional
+## Seguridad para escritura
 
 Para proteger los endpoints de escritura, define una variable de entorno antes de arrancar:
 
@@ -65,7 +65,7 @@ set BALAJI_API_KEY=una_clave_interna
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Si la variable no existe, el proyecto funciona sin clave para facilitar la demo local.
+Si la variable no existe, la prediccion sigue disponible, pero la carga de datos, el registro de ventas y el reentrenamiento desde HTTP permanecen deshabilitados (503). No desplegar el panel de administracion ni los endpoints de consulta de ventas en Internet sin autenticacion adicional y controles de acceso.
 
 ## Como llevarlo a algo real sin pagar aun
 
