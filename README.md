@@ -1,13 +1,13 @@
 # Balaji Fast Food Sales Forecast
 
-Aplicacion de analisis predictivo para estimar los ingresos diarios de Balaji Fast Food. El proyecto recorre el flujo completo: limpieza, analisis exploratorio, modelado temporal, comparacion contra baseline y entrega mediante una aplicacion FastAPI utilizable por negocio.
+Proyecto personal de análisis predictivo a partir de un dataset público de ventas de Balaji Fast Food; no se desarrolló por encargo del negocio. El proyecto recorre el flujo completo: limpieza, analisis exploratorio, modelado temporal, comparacion contra baseline y entrega mediante una aplicacion FastAPI utilizable por negocio.
 
 ## Producto final
 
 La aplicacion incluye tres superficies:
 
 - `/`: prevision diaria de ingresos con rangos de confianza del 50%, 60% y 70%.
-- `/admin`: carga y previsualizacion de CSV, alta manual de ventas y reentrenamiento.
+- `/admin`: panel técnico de mantenimiento (no forma parte de la interfaz comercial; requiere protección antes de despliegue público).
 - `/docs`: documentacion tecnica OpenAPI generada por FastAPI.
 
 El frontend esta orientado a uso comercial: muestra una estimacion principal, sus bandas de incertidumbre y el camino previsto hasta una fecha futura.
@@ -85,12 +85,16 @@ La demo de prediccion puede arrancar sin el CSV porque `models/sales_forecast_mo
 `-- README.md
 ```
 
+## Interpretación del resultado
+
+La mejora del 5,63 % en MAE frente al baseline es modesta. El R² de validación (aprox. 0,077) indica que el modelo explica una parte pequeña de la variación observada. Las bandas del 50 %, 60 % y 70 % son rangos orientativos derivados de los errores de validación, no intervalos de confianza estadística formalmente calibrados.
+
 ## Informes principales
 
 - `reports/commercial_sales_forecast_slides.html`: presentacion comercial web de 10 diapositivas para abrir en navegador, sin PowerPoint ni licencia.
-- `reports/commercial_sales_forecast_report.html`: version extensa del informe generada localmente.
-- `reports/daily_sales_model_report.html`: comparacion tecnica de modelos.
-- `reports/extra_trees_vs_baseline_sales_amount.html`: real frente a prediccion.
+- `reports/commercial_sales_forecast_report.html`: informe local regenerable; no está incluido en GitHub.
+- `reports/daily_sales_model_report.html`: informe local regenerable; no está incluido en GitHub.
+- `reports/extra_trees_vs_baseline_sales_amount.html`: informe local regenerable; no está incluido en GitHub.
 - Los archivos `.Rmd` y las figuras permanecen versionados; los HTML regenerables se excluyen, salvo la presentacion web final.
 
 ## Decisiones de modelado
