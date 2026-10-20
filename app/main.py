@@ -46,7 +46,9 @@ class SaleRecord(BaseModel):
 
 
 def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
-    if APP_API_KEY and x_api_key != APP_API_KEY:
+    if not APP_API_KEY:
+        raise HTTPException(status_code=503, detail="Write operations disabled until BALAJI_API_KEY is configured.")
+    if x_api_key != APP_API_KEY:
         raise HTTPException(status_code=401, detail="Invalid or missing API key.")
 
 
