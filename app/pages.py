@@ -74,7 +74,7 @@ BUSINESS_HTML = """
   <div class="shell">
     <header>
       <div class="brand"><div class="mark">🤖</div><div>Balaji Fast Food Forecast</div></div>
-      <div class="nav"><span>Herramienta interna</span><a href="/admin">Panel de datos</a></div>
+      <div class="nav"><span>Demostración del modelo predictivo</span></div>
     </header>
     <main>
       <section class="hero">
